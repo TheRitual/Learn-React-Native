@@ -1,13 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Button, TextInput, View } from 'react-native';
+import { Button, TextInput, View, Text } from 'react-native';
 import styles from "./styles";
 
 const Main = () => {
-    const minLength = 5;
+    const minLength = 1;
     const [enteredGoal, setEnteredGoal] = useState("");
     const [courseGoals, setCourseGoals] = useState([]);
-    
+
 
     const addGoal = () => {
         setCourseGoals(courseGoals =>
@@ -18,12 +18,18 @@ const Main = () => {
         );
     }
 
+    const removeItem = (indexToRemove) => {
+        setCourseGoals(
+                courseGoals.filter((_, index) => index !== indexToRemove)
+        );
+    }
+
     const goalInputHandler = (enteredText) => {
         setEnteredGoal(enteredText);
     }
 
     const addGoalHandler = () => {
-        if(enteredGoal.length > minLength) {
+        if (enteredGoal.length > minLength) {
             addGoal();
             setEnteredGoal("");
             console.log(courseGoals);
@@ -32,7 +38,7 @@ const Main = () => {
             alert(msg);
             console.log(msg);
         }
-        
+
     }
 
     return (
@@ -41,7 +47,13 @@ const Main = () => {
                 <TextInput value={enteredGoal} placeholder="Course Goal" onChangeText={goalInputHandler} style={styles.textInput} />
                 <Button title="ADD" style={styles.button} onPress={() => addGoalHandler()} />
             </View>
-            <View></View>
+            <View>
+                {
+                    courseGoals.map((goal, index) =>
+                        <Button key={index} title={goal} onPress={() => { removeItem(index) }} />
+                    )
+                }
+            </View>
             <StatusBar />
         </View>
     );

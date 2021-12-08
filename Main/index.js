@@ -29,7 +29,7 @@ const Main = () => {
 
     const addGoalHandler = goalTitle => {
         if (goalTitle === "Fill") {
-            for (let i = 0; i < 1000; i++) {
+            for (let i = 0; i < 100; i++) {
                 setCourseGoals(courseGoals =>
                     [
                         ...courseGoals,
@@ -57,7 +57,7 @@ const Main = () => {
             <TopPanel onAddGoal={addGoalHandler} />
             <FlatList
                 data={courseGoals}
-                renderItem={goal => <ListItem index={goal.index} value={goal.item.value} onPress={() => removeItem(goal.index)} />}
+                renderItem={goal => <ListItem index={goal.index} value={goal.item.value} onDelete={removeItem} />}
             />
             <StatusBar />
         </View>

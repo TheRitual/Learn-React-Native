@@ -1,59 +1,64 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Button, TextInput, View, Text } from 'react-native';
+import { Button, TextInput, View, ScrollView, FlatList } from 'react-native';
+import ListItem from './ListItem';
 import styles from "./styles";
+import TopPanel from './TopPanel';
 
 const Main = () => {
     const minLength = 1;
-    const [enteredGoal, setEnteredGoal] = useState("");
     const [courseGoals, setCourseGoals] = useState([]);
 
-
-    const addGoal = () => {
+    const addGoal = (goalTitle) => {
         setCourseGoals(courseGoals =>
             [
                 ...courseGoals,
-                enteredGoal,
+                {
+                    key: courseGoals.length,
+                    value: goalTitle
+                },
             ]
         );
     }
 
     const removeItem = (indexToRemove) => {
         setCourseGoals(
-                courseGoals.filter((_, index) => index !== indexToRemove)
+            courseGoals.filter((_, index) => index !== indexToRemove)
         );
     }
 
-    const goalInputHandler = (enteredText) => {
-        setEnteredGoal(enteredText);
-    }
-
-    const addGoalHandler = () => {
-        if (enteredGoal.length > minLength) {
-            addGoal();
-            setEnteredGoal("");
-            console.log(courseGoals);
+    const addGoalHandler = goalTitle => {
+        if (goalTitle === "Fill") {
+            for (let i = 0; i < 1000; i++) {
+                setCourseGoals(courseGoals =>
+                    [
+                        ...courseGoals,
+                        {
+                            key: courseGoals.length,
+                            value: "Fill Goal " + i,
+                        },
+                    ]
+                );
+            }
         } else {
-            const msg = "Too short Goal:\nJust " + enteredGoal.length + " char(s)\nMinimum: " + minLength;
-            alert(msg);
-            console.log(msg);
+            if (goalTitle.length > minLength) {
+                addGoal(goalTitle);
+                console.log(courseGoals);
+            } else {
+                const msg = "Too short Goal:\nJust " + goalTitle.length + " char(s)\nMinimum: " + (minLength + 1);
+                alert(msg);
+                console.log(msg);
+            }
         }
-
     }
 
     return (
         <View style={styles.screen}>
-            <View style={styles.topPanel}>
-                <TextInput value={enteredGoal} placeholder="Course Goal" onChangeText={goalInputHandler} style={styles.textInput} />
-                <Button title="ADD" style={styles.button} onPress={() => addGoalHandler()} />
-            </View>
-            <View>
-                {
-                    courseGoals.map((goal, index) =>
-                        <Button key={index} title={goal} onPress={() => { removeItem(index) }} />
-                    )
-                }
-            </View>
+            <TopPanel onAddGoal={addGoalHandler} />
+            <FlatList
+                data={courseGoals}
+                renderItem={goal => <ListItem index={goal.index} value={goal.item.value} onPress={() => removeItem(goal.index)} />}
+            />
             <StatusBar />
         </View>
     );
